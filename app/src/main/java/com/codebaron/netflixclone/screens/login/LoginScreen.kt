@@ -25,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.codebaron.netflixclone.R
 import com.codebaron.netflixclone.ui.theme.NetflixCloneTheme
 import com.codebaron.netflixclone.utilities.*
@@ -58,11 +60,10 @@ fun InputFields() {
                 .height(150.dp)
                 .width(150.dp)
                 .aspectRatio(16f / 9f),
-            painter = rememberImagePainter(
-                data = NETFLIX_LOGO,
-                builder = {
+            painter = rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current).data(data = NETFLIX_LOGO).apply(block = fun ImageRequest.Builder.() {
                     error(R.drawable.netflix)
-                },
+                }).build()
             ),
             contentDescription = DUMMY_TEXT,
             contentScale = ContentScale.FillWidth

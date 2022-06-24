@@ -5,11 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codebaron.netflixclone.actors.model.id.ActorsIds
-import com.codebaron.netflixclone.actors.model.videos.Video
+import com.codebaron.netflixclone.actors.model.videos.Resource
 import com.codebaron.netflixclone.repository.RequestRepositories
 import com.codebaron.netflixclone.utilities.REGIONS
 import com.codebaron.netflixclone.utilities.getCurrentDayNumber
 import com.codebaron.netflixclone.utilities.getCurrentMonthNumber
+import com.codebaron.netflixclone.utilities.subString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class ActorsViewModel @Inject constructor(private val requestRepositories: Reque
 
     private val _actorsIds = MutableLiveData<List<ActorsIds>>()
     private val _randomActorId = MutableLiveData<String>()
-    private val _actorsVideos = MutableLiveData<List<Video>>()
+    private val _actorsVideos = MutableLiveData<Resource>()
 
     fun getAllActorsId(): LiveData<List<ActorsIds>> {
         viewModelScope.launch {
@@ -30,8 +31,8 @@ class ActorsViewModel @Inject constructor(private val requestRepositories: Reque
             )
             try {
                 _actorsIds.postValue(ids)
-                val random = ids?.shuffled()?.get(0)
-                _randomActorId.postValue(random.toString())
+                val randomId = ids?.random()
+                _randomActorId.postValue(subString(randomId.toString()))
             } catch (exception: Exception) {
                 exception.message
             }
@@ -39,13 +40,13 @@ class ActorsViewModel @Inject constructor(private val requestRepositories: Reque
         return _actorsIds
     }
 
-    fun getAllActorsVideos(): LiveData<List<Video>> {
+    fun getAllActorsVideos(): LiveData<Resource> {
         viewModelScope.launch {
             val videos = _randomActorId.value?.let {
                 requestRepositories.getActorVideos(
                     it,
                     REGIONS.random()
-                )?.videos
+                )
             }
             try {
                 _actorsVideos.postValue(videos)

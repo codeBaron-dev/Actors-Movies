@@ -12,11 +12,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.codebaron.netflixclone.R
 import com.codebaron.netflixclone.ui.theme.NetflixCloneTheme
 import com.codebaron.netflixclone.utilities.DUMMY_TEXT
@@ -43,12 +46,11 @@ fun SplashScreen(navigationController: NavHostController) {
                     .height(150.dp)
                     .width(150.dp)
                     .aspectRatio(16f / 9f),
-                painter = rememberImagePainter(
-                    data = NETFLIX_LOGO,
-                    builder = {
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current).data(data = NETFLIX_LOGO).apply(block = fun ImageRequest.Builder.() {
                         placeholder(R.drawable.netflix)
                         error(R.drawable.netflix)
-                    },
+                    }).build()
                 ),
                 contentDescription = DUMMY_TEXT,
                 contentScale = ContentScale.FillWidth
